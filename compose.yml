@@ -1,0 +1,131 @@
+version: "3.9"
+
+services:
+  pr-server:
+    container_name: server
+    image: vinipilan9999/proxy-reverse-server:3.0
+    build: ./pr-server/
+    read_only: true
+    restart: always
+    tmpfs:                   
+      - /run   
+      - /tmp  
+      - /var/cache/nginx
+    # volumes:
+    #   - ./pr-server/conf.d:/etc/nginx/conf.d    ## Bind mount para dev.
+    #   - ./html:/usr/share/nginx/html            ## Bind mount para dev.
+    networks:
+      - server
+    ports:
+      - ${LOCAL_PORT}:80
+    depends_on:
+      - mysql-adm
+      - mongo-adm
+    deploy:
+        resources:
+            limits:
+              cpus: "0.50"
+              memory: 100M
+      
+
+  mongo-db:
+    container_name: mongo-db
+    image: mongo:6.0.1
+    read_only: true
+    restart: always
+    tmpfs:
+      - /tmp 
+      - /run   
+    networks:
+      - mongo
+    volumes:
+      - mongo-content:/data/db
+      - mongo-config:/data/configdb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+    deploy:
+        resources:
+            limits:
+              cpus: "0.50"
+              memory: 700M
+
+  
+  mongo-adm:
+    container_name: mongo-adm
+    image: mongo-express:1.0.0-alpha
+    read_only: true
+    restart: always
+    tmpfs:
+      - /tmp
+    networks:
+      - mongo
+      - server
+    depends_on:
+      - mongo-db
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@mongo-db:27017/
+      ME_CONFIG_SITE_BASEURL: /nosql/
+    deploy:
+        resources:
+            limits:
+              cpus: "0.50"
+              memory: 150M
+  
+
+  mysql-db:
+    container_name: mysql-db
+    image: mysql:8.0.30
+    read_only: true
+    restart: always
+    tmpfs:
+      - /run
+      - /tmp
+    networks:
+      - mysql
+    volumes:
+      - mysql-content:/var/lib/mysql
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: 1 
+      MYSQL_DATABASE: ${MYSQL_DATABASE_NAME}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    deploy:
+        resources:
+            limits:
+              cpus: "0.50"
+              memory: 1.2G
+
+
+  mysql-adm:
+    container_name: mysql-adm
+    image: adminer:4.8.1
+    read_only: true
+    restart: always
+    tmpfs:  
+      - /tmp    
+    networks:
+      - mysql
+      - server
+    depends_on:
+      - mysql-db
+    environment:
+      ADMINER_DEFAULT_SERVER: mysql-db
+    deploy:
+        resources:
+            limits:
+              cpus: "0.50"
+              memory: 50M
+
+
+
+volumes:
+  mongo-content:
+  mongo-config:
+  mysql-content:
+
+
+networks:
+  mongo:
+  mysql:
+  server:

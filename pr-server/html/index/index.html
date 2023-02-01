@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Home</title>
+        <meta charset="UTF-8">
+        <meta author="Vinícius Pilan">
+        <style>
+            body {margin:5%;
+                  font-family: "Source Sans Pro", sans-serif;
+                  line-height: 150%;}
+            
+            h1 {margin-bottom: 5%;}
+
+            #DockerIMG {width: 80%;}
+            #GitIMG {width: 120%;}
+
+            #imagens {content: "";
+                      clear: both;
+                      display: table;
+                      
+                      margin-left: 38%;}
+
+            .coluna {float: left;
+                     width: 20%;}
+            
+
+            
+        </style>
+    </head>
+    <body>
+        <h1>Projeto 01 - Sistema com Docker Compose</h1>
+        <h2>Home</h2>
+        <p>Página home do web server! O sistema foi criado a partir da comunicação entre containers Docker e através do uso do Docker compose.</p>
+        
+        <div id="imagens">
+            <div class="coluna">
+                <a href="https://hub.docker.com/u/vinipilan9999" target="_blank"><img id="DockerIMG" src="docker_img.png"></a>
+            </div>
+
+            <div class="coluna">
+                <a href="https://github.com/vinipilan9999/nginx-proxy-reverse-example" target="_blank"><img id="GitIMG" src="GitHub.jpg" style="margin-top:12px"></a>
+            </div>
+        </div>
+
+        <p><br>Para mais informações sobre as funcionalidades e os componentes do sistema, acesse <i>/help</i> na url. </p>
+    </body>
+
+</html>
+
